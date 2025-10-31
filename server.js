@@ -1,12 +1,14 @@
 import express from "express";
 import axios from "axios";
+import cors from "cors";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 puppeteer.use(StealthPlugin)
 
 const app = express();
+app.use(cors());
 const PORT = 3000;
-const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+const ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
 
 async function getCookie() {
   const browser = await puppeteer.launch({
@@ -31,13 +33,12 @@ async function getCookie() {
 // Function to create axios instance with headers
 const createAxiosInstance = async () => {
   const headers = {
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "User-Agent": ua,
     Accept: "application/json, text/plain, */*",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "en-US,en;q=0.9",
     Connection: "keep-alive",
-    Referer: "https://www.nseindia.com/",
+    Referer: "https://www.nseindia.com/get-quotes/equity?symbol=TCS",
     Cookie: await getCookie(),
   };
 
@@ -48,8 +49,6 @@ const createAxiosInstance = async () => {
     withCredentials: true,
   });
 
-  // Visit NSE home page first to get valid cookies
-  await instance.get("https://www.nseindia.com");
   return instance;
 };
 
